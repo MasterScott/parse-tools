@@ -1,0 +1,40 @@
+* Finding Title
+   XmlReport, Results, IssueTypes, IssueType[IssueTypeID], advisory, name
+
+* Severity
+   XmlReport, Results, Issues, Issue, Severity
+
+* Systems
+   XmlReport, Results, Issues, Issue, URL
+      [and possibly]
+   XmlReport, Results, Issues, Issue, Enty, attr>name if attr>Type==Parameter
+
+* Description
+   XmlReport, Results, IssueTypes, IssueType[IssueTypeID], advisory, testTechnicalDescription, text
+
+* Mitigation
+   XmlReport, Results, RemediationTypes, RemediationType[ID], fixRemediation (type=general)
+
+* Impact
+   XmlReport, Results, IssueTypes, IssueType[IssueTypeID], advisory, securityRisks, securityRisk
+
+References
+   XmlReport, Results, IssueTypes, IssueType[IssueTypeID], advisory, cwe, link - target,attr & id,attr
+                                                                    
+
+Maps needed from IssueType:
+(1) title[ID attr from IssueType] = avisory->name
+    e.x. title["attCrossSiteScripting"] = "Cross-Site Scripting"
+
+(2) desc[ID attr from IssueType] = advisory->testTechnicalDescription->text[]
+    e.x. desc["attCrossSiteScripting"] = "Blah, blah, blah" concantenated from the text[]'s
+
+(3) impact[ID attr from IssueType] = avisory->securityRisks->securityRisk[]
+    e.x. desc["attCrossSiteScripting"] = "Blah, blah, blah" concantenated from the securityRisk[]'s
+
+(3) cweMap[ID attr from IssueType] = avisory->cwe->link's target,attr & id,attr
+    e.x. desc["attCrossSiteScripting"] = "http://cwe.mitre.org/data/definitions/16.html[CWE-16: Configuration]"
+
+Maps needed from RemediationType
+(1) miti[ID attr from RemediationType] = fixRemediation (type=general)->text[]
+    e.x. miti["fix_5200"] = "Blah, blah, blah" concantenated from the text[]'s

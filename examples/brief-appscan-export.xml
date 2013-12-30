@@ -1,0 +1,1739 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<XmlReport Name="CORE_staging" XmlExportVersion="2.0">
+  <AppScanInfo>
+    <Version>8.6.0.272</Version>
+    <ServicePack />
+  </AppScanInfo>
+  <Summary>
+    <TotalIssues>2</TotalIssues>
+    <TotalVariants>3</TotalVariants>
+    <TotalRemediations>2</TotalRemediations>
+    <TotalScanDuration>11:09:56.1360000</TotalScanDuration>
+    <Hosts>
+      <Host Name="http://staging.example.com/">
+        <TotalInformationalIssues>0</TotalInformationalIssues>
+        <TotalLowSeverityIssues>0</TotalLowSeverityIssues>
+        <TotalMediumSeverityIssues>0</TotalMediumSeverityIssues>
+        <TotalHighSeverityIssues>0</TotalHighSeverityIssues>
+        <Total>0</Total>
+      </Host>
+      <Host Name="https://staging.example.com/">
+        <TotalInformationalIssues>0</TotalInformationalIssues>
+        <TotalLowSeverityIssues>0</TotalLowSeverityIssues>
+        <TotalMediumSeverityIssues>1</TotalMediumSeverityIssues>
+        <TotalHighSeverityIssues>2</TotalHighSeverityIssues>
+        <Total>3</Total>
+      </Host>
+    </Hosts>
+  </Summary>
+  <Results>
+    <RemediationTypes>
+      <Total>2</Total>
+      <RemediationType ID="fix_52000">
+        <Name>Review possible solutions for hazardous character injection</Name>
+        <Priority>High</Priority>
+        <fixRecommendation type="General">
+          <text>There are several mitigation techniques:</text>
+          <text>[1] Strategy: Libraries or Frameworks</text>
+          <text>Use a vetted library or framework that does not allow this weakness to occur, or provides constructs that make it easier to avoid.</text>
+          <text>Examples of libraries and frameworks that make it easier to generate properly encoded output include Microsoft's Anti-XSS library, the OWASP ESAPI Encoding module, and Apache Wicket.</text>
+          <br />
+          <text>[2] Understand the context in which your data will be used, and the encoding that will be expected. This is especially important when transmitting data between different components, or when generating outputs that can contain multiple encodings at the same time, such as web pages or multi-part mail messages. Study all expected communication protocols and data representations to determine the required encoding strategies.</text>
+          <text>For any data that will be output to another web page, especially any data that was received from external inputs, use the appropriate encoding on all non-alphanumeric characters.</text>
+          <text>Parts of the same output document may require different encodings, which will vary depending on whether the output is in the:</text>
+          <text>[-] HTML body</text>
+          <text>[-] Element attributes (such as src="XYZ")</text>
+          <text>[-] URIs</text>
+          <text>[-] JavaScript sections</text>
+          <text>[-] Cascading Style Sheets and style property</text>
+          <text>Note that HTML Entity Encoding is only appropriate for the HTML body.</text>
+          <text>Consult the XSS Prevention Cheat Sheet </text>
+          <link target="http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet">http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet</link>
+          <text>for more details on the types of encoding and escaping that are needed.</text>
+          <br />
+          <text>[3] Strategy: Identify and Reduce Attack Surface</text>
+          <text>Understand all the potential areas where untrusted inputs can enter your software: parameters or arguments, cookies, anything read from the network, environment variables, reverse DNS lookups, query results, request headers, URL components, e-mail, files, filenames, databases, and any external systems that provide data to the application. Remember that such inputs may be obtained indirectly through API calls.</text>
+          <br />
+          <text>[4] Strategy: Output Encoding</text>
+          <text>For every web page that is generated, use and specify a character encoding such as ISO-8859-1 or UTF-8. When an encoding is not specified, the web browser may choose a different encoding by guessing which encoding is actually being used by the web page. This can cause the web browser to treat certain sequences as special, opening up the client to subtle XSS attacks. See CWE-116 for more mitigations related to encoding/escaping.</text>
+          <br />
+          <text>[5] Strategy: Identify and Reduce Attack Surface</text>
+          <text>To help mitigate XSS attacks against the user's session cookie, set the session cookie to be HttpOnly. In browsers that support the HttpOnly feature (such as more recent versions of Internet Explorer and Firefox), this attribute can prevent the user's session cookie from being accessible to malicious client-side scripts that use document.cookie. This is not a complete solution, since HttpOnly is not supported by all browsers. More importantly, XMLHTTPRequest and other powerful browser technologies provide read access to HTTP headers, including the Set-Cookie header in which the HttpOnly flag is set.</text>
+          <br />
+          <text>[6] Strategy: Input Validation</text>
+          <text>Assume all input is malicious. Use an "accept known good" input validation strategy: a whitelist of acceptable inputs that strictly conform to specifications. Reject any input that does not strictly conform to specifications, or transform it into something that does. Do not rely exclusively on blacklisting malicious or malformed inputs. However, blacklists can be useful for detecting potential attacks or determining which inputs are so malformed that they should be rejected outright.</text>
+          <text>When performing input validation, consider all potentially relevant properties, including length, type of input, the full range of acceptable values, missing or extra inputs, syntax, consistency across related fields, and conformance to business rules. As an example of business rule logic, "boat" may be syntactically valid because it only contains alphanumeric characters, but it is not valid if you are expecting colors such as "red" or "blue."</text>
+          <text>When dynamically constructing web pages, use stringent whitelists that limit the character set based on the expected value of the parameter in the request. All input should be validated and cleansed, not only parameters that the user is expected to specify, but all data in the request, including hidden fields, cookies, headers, the URL itself, and so forth. A common mistake that leads to continuing XSS vulnerabilities is to validate only those fields that are expected to be redisplayed by the site. It is common for other data from the request to be reflected by the application server or the application, and for development teams to fail to anticipate this. Also, a field that is not currently reflected may be used by a future developer. Therefore, validating ALL parts of the HTTP request is recommended.</text>
+          <text>Note that proper output encoding, escaping, and quoting is the most effective solution for preventing XSS, although input validation may provide some defense-in-depth. Input validation effectively limits what will appear in output. It will not always prevent XSS, especially if you are required to support free-form text fields that could contain arbitrary characters. For example, in a chat application, the heart emoticon ("&lt;3") would likely pass the validation step, since it is commonly used. However, it cannot be directly inserted into the web page because it contains the "&lt;" character, which would need to be escaped or otherwise handled. In this case, stripping the "&lt;" might reduce the risk of XSS, but it would produce incorrect behavior because the emoticon would not be recorded. This might seem to be a minor inconvenience, but it would be more important in a mathematical forum that wants to represent inequalities.</text>
+          <text>Even if you make a mistake in your validation (such as forgetting one of 100 input fields), appropriate encoding is still likely to protect you from injection-based attacks. As long as it is not done in isolation, input validation is still a useful technique, since it may significantly reduce your attack surface, allow you to detect some attacks, and provide other security benefits that proper encoding does not address.</text>
+          <text>Ensure that you perform input validation at well-defined interfaces within the application. This will help protect the application even if a component is reused or moved elsewhere.</text>
+        </fixRecommendation>
+      </RemediationType>
+      <RemediationType ID="fix_60310">
+        <Name>Change session identifier values after login</Name>
+        <Priority>Medium</Priority>
+        <fixRecommendation type="General">
+          <text>Prevent user ability to manipulate session ID. Do not accept session IDs provided by the user's browser at login; always generate a new session to which the user will log in if successfully authenticated. </text>
+          <text>Invalidate any existing session identifiers prior to authorizing a new user session.</text>
+          <text>For platforms such as ASP that do not generate new values for sessionid cookies, utilize a secondary cookie. In this approach, set a secondary cookie on the user's browser to a random value and set a session variable to the same value. If the session variable and the cookie value ever don't match, invalidate the session, and force the user to log on again.</text>
+        </fixRecommendation>
+      </RemediationType>
+    </RemediationTypes>
+    <IssueTypes>
+      <Total>2</Total>
+      <IssueType ID="attCrossSiteScripting" Count="2">
+        <RemediationID>fix_52000</RemediationID>
+        <advisory>
+          <name>Cross-Site Scripting</name>
+          <testDescription>Application-level test</testDescription>
+          <threatClassification>
+            <name>Cross-site Scripting</name>
+            <reference>http://projects.webappsec.org/Cross-Site+Scripting</reference>
+          </threatClassification>
+          <testTechnicalDescription>
+            <text>AppScan has detected that the application does not correctly neutralize user-controllable input before it is placed in output that is served as a web page.</text>
+            <text>This may be used in a Cross-site scripting attack.</text>
+            <br />
+            <text>Cross-site scripting (XSS) vulnerabilities occur when:</text>
+            <text>[1] Untrusted data enters a web application, typically from a web request.</text>
+            <text>[2] The web application dynamically generates a web page that contains this untrusted data.</text>
+            <text>[3] During page generation, the application does not prevent the data from containing content that is executable by a web browser, such as JavaScript, HTML tags, HTML attributes, mouse events, Flash, ActiveX.</text>
+            <text>[4] A victim visits the generated web page through a web browser, which contains a malicious script that was injected using the untrusted data.</text>
+            <text>[5] Since the script comes from a web page that was sent by the web server, the victim's web browser executes the malicious script in the context of the web server's domain.</text>
+            <text>[6] This effectively violates the intention of the web browser's same-origin policy, which states that scripts in one domain should not be able to access resources or run code in a different domain.</text>
+            <br />
+            <text>Once the malicious script is injected, the attacker can perform a variety of malicious activities. The attacker could transfer private information, such as cookies that may include session information, from the victim's machine to the attacker. The attacker could send malicious requests to a web site on behalf of the victim, which could be especially dangerous to the site if the victim has administrator privileges to manage that site.</text>
+            <text>Phishing attacks could be used to emulate trusted web sites and trick the victim into entering a password, allowing the attacker to compromise the victim's account on that web site. Finally, the script could exploit a vulnerability in the web browser itself, possibly taking over the victim's machine (sometimes referred to as "drive-by hacking").</text>
+            <br />
+            <text>There are three main kinds of XSS:</text>
+            <br />
+            <text>Type 1: Reflected XSS (also called "Non-Persistent")</text>
+            <text>The server reads data directly from the HTTP request and reflects it back in the HTTP response. Reflected XSS exploits occur when an attacker causes a victim to supply dangerous content to a vulnerable web application, which is then reflected back to the victim and executed by the web browser. The most common mechanism for delivering malicious content is to include it as a parameter in a URL that is posted publicly or e-mailed directly to the victim. URLs constructed in this manner constitute the core of many phishing schemes, whereby an attacker convinces a victim to visit a URL that refers to a vulnerable site. After the site reflects the attacker's content back to the victim, the content is executed by the victim's browser.</text>
+            <br />
+            <text>Type 2: Stored XSS (also called "Persistent")</text>
+            <text>The application stores dangerous data in a database, message forum, visitor log, or other trusted data store. At a later time, the dangerous data is read back into the application and included in dynamic content. From an attacker's perspective, the optimal place to inject malicious content is in an area that is displayed to either many users or particularly interesting users. Interesting users typically have elevated privileges in the application or interact with sensitive data that is valuable to the attacker. If one of these users executes malicious content, the attacker may be able to perform privileged operations on behalf of the user or gain access to sensitive data belonging to the user. For example, the attacker might inject XSS into a log message, which might not be handled properly when an administrator views the logs.</text>
+            <br />
+            <text>Type 0: DOM-Based XSS</text>
+            <text>In DOM-based XSS, the client performs the injection of XSS into the page; in the other types, the server performs the injection. DOM-based XSS generally involves server-controlled, trusted script that is sent to the client, such as Javascript that performs sanity checks on a form before the user submits it. If the server-supplied script processes user-supplied data and then injects it back into the web page (such as with dynamic HTML), then DOM-based XSS is possible.</text>
+            <br />
+            <text>The following example shows a script that returns a parameter value in the response.</text>
+            <text>The parameter value is sent to the script using a GET request, and then retured in the response embedded in the HTML.</text>
+            <code>  [REQUEST]
+  GET /index.aspx?name=JSmith HTTP/1.1
+</code>
+            <br />
+            <code>  [RESPONSE]
+  HTTP/1.1 200 OK
+  Server: SomeServer
+  Date: Sun, 01 Jan 2002 00:31:19 GMT
+  Content-Type: text/html
+  Accept-Ranges: bytes
+  Content-Length: 27
+  
+  &lt;HTML&gt;
+  Hello JSmith
+  &lt;/HTML&gt;
+</code>
+            <text>An attacker might leverage the attack like so:</text>
+            <code>  [ATTACK REQUEST]
+  GET /index.aspx?name=&gt;"'&gt;&lt;script&gt;alert('PWND')&lt;/script&gt; HTTP/1.1
+</code>
+            <br />
+            <code>  [ATTACK RESPONSE]
+  HTTP/1.1 200 OK
+  Server: SomeServer
+  Date: Sun, 01 Jan 2002 00:31:19 GMT
+  Content-Type: text/html
+  Accept-Ranges: bytes
+  Content-Length: 83
+  
+  &lt;HTML&gt;
+  Hello &gt;"'&gt;&lt;script&gt;alert('PWND')&lt;/script&gt;
+  &lt;/HTML&gt;
+</code>
+            <br />
+            <text>In this case, the JavaScript code will be executed by the browser (The &gt;"'&gt; part is irrelevant here).</text>
+          </testTechnicalDescription>
+          <causes>
+            <cause>Sanitation of hazardous characters was not performed correctly on user input</cause>
+          </causes>
+          <securityRisks>
+            <securityRisk>It is possible to steal or manipulate customer session and cookies, which might be used to impersonate a legitimate user, allowing the hacker to view or alter user records, and to perform transactions as that user</securityRisk>
+          </securityRisks>
+          <affectedProducts>
+            <affectedProduct>This issue may affect different types of products.</affectedProduct>
+          </affectedProducts>
+          <cwe>
+            <link target="http://cwe.mitre.org/data/definitions/79.html" id="CWE-79">79</link>
+          </cwe>
+          <references>
+            <link target="http://www.cert.org/advisories/CA-2000-02.html">CERT Advisory CA-2000-02</link>
+            <link target="http://support.microsoft.com/default.aspx?scid=kb;EN-US;q252985">Microsoft How To: Prevent Cross-Site Scripting Security Issues (Q252985)</link>
+            <link target="http://msdn2.microsoft.com/en-us/library/ms998274.aspx">Microsoft How To: Prevent Cross-Site Scripting in ASP.NET</link>
+            <link target="http://msdn2.microsoft.com/en-us/library/Bb355989.aspx">Microsoft How To: Protect From Injection Attacks in ASP.NET</link>
+            <link target="http://msdn2.microsoft.com/en-us/library/ms998267.aspx">Microsoft How To: Use Regular Expressions to Constrain Input in ASP.NET</link>
+            <link target="http://msdn2.microsoft.com/en-us/security/aa973814.aspx">Microsoft .NET Anti-Cross Site Scripting Library</link>
+            <link target="http://download.boulder.ibm.com/ibmdl/pub/software/dw/richmedia/rational/08/appscan_demos/xss/viewer.swf#recorded_advisory">Cross-Site Scripting Training Module</link>
+          </references>
+          <fixRecommendations>
+            <fixRecommendation type="General">
+              <text>There are several mitigation techniques:</text>
+              <text>[1] Strategy: Libraries or Frameworks</text>
+              <text>Use a vetted library or framework that does not allow this weakness to occur, or provides constructs that make it easier to avoid.</text>
+              <text>Examples of libraries and frameworks that make it easier to generate properly encoded output include Microsoft's Anti-XSS library, the OWASP ESAPI Encoding module, and Apache Wicket.</text>
+              <br />
+              <text>[2] Understand the context in which your data will be used, and the encoding that will be expected. This is especially important when transmitting data between different components, or when generating outputs that can contain multiple encodings at the same time, such as web pages or multi-part mail messages. Study all expected communication protocols and data representations to determine the required encoding strategies.</text>
+              <text>For any data that will be output to another web page, especially any data that was received from external inputs, use the appropriate encoding on all non-alphanumeric characters.</text>
+              <text>Parts of the same output document may require different encodings, which will vary depending on whether the output is in the:</text>
+              <text>[-] HTML body</text>
+              <text>[-] Element attributes (such as src="XYZ")</text>
+              <text>[-] URIs</text>
+              <text>[-] JavaScript sections</text>
+              <text>[-] Cascading Style Sheets and style property</text>
+              <text>Note that HTML Entity Encoding is only appropriate for the HTML body.</text>
+              <text>Consult the XSS Prevention Cheat Sheet </text>
+              <link target="http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet">http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet</link>
+              <text>for more details on the types of encoding and escaping that are needed.</text>
+              <br />
+              <text>[3] Strategy: Identify and Reduce Attack Surface</text>
+              <text>Understand all the potential areas where untrusted inputs can enter your software: parameters or arguments, cookies, anything read from the network, environment variables, reverse DNS lookups, query results, request headers, URL components, e-mail, files, filenames, databases, and any external systems that provide data to the application. Remember that such inputs may be obtained indirectly through API calls.</text>
+              <br />
+              <text>[4] Strategy: Output Encoding</text>
+              <text>For every web page that is generated, use and specify a character encoding such as ISO-8859-1 or UTF-8. When an encoding is not specified, the web browser may choose a different encoding by guessing which encoding is actually being used by the web page. This can cause the web browser to treat certain sequences as special, opening up the client to subtle XSS attacks. See CWE-116 for more mitigations related to encoding/escaping.</text>
+              <br />
+              <text>[5] Strategy: Identify and Reduce Attack Surface</text>
+              <text>To help mitigate XSS attacks against the user's session cookie, set the session cookie to be HttpOnly. In browsers that support the HttpOnly feature (such as more recent versions of Internet Explorer and Firefox), this attribute can prevent the user's session cookie from being accessible to malicious client-side scripts that use document.cookie. This is not a complete solution, since HttpOnly is not supported by all browsers. More importantly, XMLHTTPRequest and other powerful browser technologies provide read access to HTTP headers, including the Set-Cookie header in which the HttpOnly flag is set.</text>
+              <br />
+              <text>[6] Strategy: Input Validation</text>
+              <text>Assume all input is malicious. Use an "accept known good" input validation strategy: a whitelist of acceptable inputs that strictly conform to specifications. Reject any input that does not strictly conform to specifications, or transform it into something that does. Do not rely exclusively on blacklisting malicious or malformed inputs. However, blacklists can be useful for detecting potential attacks or determining which inputs are so malformed that they should be rejected outright.</text>
+              <text>When performing input validation, consider all potentially relevant properties, including length, type of input, the full range of acceptable values, missing or extra inputs, syntax, consistency across related fields, and conformance to business rules. As an example of business rule logic, "boat" may be syntactically valid because it only contains alphanumeric characters, but it is not valid if you are expecting colors such as "red" or "blue."</text>
+              <text>When dynamically constructing web pages, use stringent whitelists that limit the character set based on the expected value of the parameter in the request. All input should be validated and cleansed, not only parameters that the user is expected to specify, but all data in the request, including hidden fields, cookies, headers, the URL itself, and so forth. A common mistake that leads to continuing XSS vulnerabilities is to validate only those fields that are expected to be redisplayed by the site. It is common for other data from the request to be reflected by the application server or the application, and for development teams to fail to anticipate this. Also, a field that is not currently reflected may be used by a future developer. Therefore, validating ALL parts of the HTTP request is recommended.</text>
+              <text>Note that proper output encoding, escaping, and quoting is the most effective solution for preventing XSS, although input validation may provide some defense-in-depth. Input validation effectively limits what will appear in output. It will not always prevent XSS, especially if you are required to support free-form text fields that could contain arbitrary characters. For example, in a chat application, the heart emoticon ("&lt;3") would likely pass the validation step, since it is commonly used. However, it cannot be directly inserted into the web page because it contains the "&lt;" character, which would need to be escaped or otherwise handled. In this case, stripping the "&lt;" might reduce the risk of XSS, but it would produce incorrect behavior because the emoticon would not be recorded. This might seem to be a minor inconvenience, but it would be more important in a mathematical forum that wants to represent inequalities.</text>
+              <text>Even if you make a mistake in your validation (such as forgetting one of 100 input fields), appropriate encoding is still likely to protect you from injection-based attacks. As long as it is not done in isolation, input validation is still a useful technique, since it may significantly reduce your attack surface, allow you to detect some attacks, and provide other security benefits that proper encoding does not address.</text>
+              <text>Ensure that you perform input validation at well-defined interfaces within the application. This will help protect the application even if a component is reused or moved elsewhere.</text>
+            </fixRecommendation>
+            <fixRecommendation type="ASP.NET">
+              <text>[1] We recommend that you upgrade your server to .NET Framework 2.0 (or newer), which includes inherent security checks that protect against cross site scripting attacks.</text>
+              <text>[2] You can add input validation to Web Forms pages by using validation controls. Validation controls provide an easy-to-use mechanism for all common types of standard validation (for example, tests for valid dates or values within a range). The validation controls also support custom-written validations, and allow you to completely customize how error information is displayed to the user. Validation controls can be used with any controls that are processed in a Web Forms page class file, including both HTML and Web server controls.</text>
+              <br />
+              <text>To make sure that user input contains only valid values, you can use one of the following validation controls:</text>
+              <br />
+              <text>[1] "RangeValidator": checks that a user's entry (value) is between specified lower and upper boundaries. You can check ranges within pairs of numbers, alphabetic characters, and dates.</text>
+              <br />
+              <text>[2] "RegularExpressionValidator": checks that the entry matches a pattern defined by a regular expression. This type of validation allows you to check for predictable sequences of characters, such as those in social security numbers, e-mail addresses, telephone numbers, postal codes, and so on.</text>
+              <br />
+              <text>Examples of regular expressions that may help block cross site scripting:</text>
+              <br />
+              <text>- A possible regular expression, which will deny the basic cross site scripting variants might be: ^([^&lt;]|\&lt;[^a-zA-Z])*[&lt;]?$</text>
+              <text>- A generic regular expression, which will deny all of the aforementioned characters might be: ^([^\&lt;\&gt;\"\'\%\;\)\(\&amp;\+]*)$</text>
+              <br />
+              <text>Important note: validation controls do not block user input or change the flow of page processing; they only set an error state, and produce error messages. It is the programmer's responsibility to test the state of the controls in the code before performing further application-specific actions.</text>
+              <br />
+              <text>There are two ways to check for user input validity: </text>
+              <br />
+              <text>1. Test for a general error state: </text>
+              <text>In your code, test the page's IsValid property. This property rolls up the values of the IsValid properties of all the validation controls on the page (using a logical AND). If one of the validation controls is set to invalid, the page's property will return false.</text>
+              <br />
+              <text>2. Test for the error state of individual controls:</text>
+              <text>Loop through the page's Validators collection, which contains references to all the validation controls. You can then examine the IsValid property of each validation control.</text>
+              <br />
+              <text>Finally, we recommend that the Microsoft Anti-Cross Site Scripting Library (v1.5 or higher) be used to encode untrusted user input.</text>
+              <br />
+              <text>The Anti-Cross Site Scripting library exposes the following methods:</text>
+              <br />
+              <text>[1] HtmlEncode - Encodes input strings for use in HTML</text>
+              <text>[2] HtmlAttributeEncode - Encodes input strings for use in HTML attributes</text>
+              <text>[3] JavaScriptEncode - Encodes input strings for use in JavaScript</text>
+              <text>[4] UrlEncode - Encodes input strings for use in Universal Resource Locators (URLs)</text>
+              <text>[5] VisualBasicScriptEncode - Encodes input strings for use in Visual Basic Script</text>
+              <text>[6] XmlEncode - Encodes input strings for use in XML</text>
+              <text>[7] XmlAttributeEncode - Encodes input strings for use in XML attributes</text>
+              <br />
+              <text>To properly use the Microsoft Anti-Cross Site Scripting Library to protect ASP.NET Web-applications, you need to:</text>
+              <br />
+              <text>Step 1: Review ASP.NET code that generates output</text>
+              <text>Step 2: Determine whether output includes untrusted input parameters</text>
+              <text>Step 3: Determine the context which the untrusted input is used as output, and determine which encoding method to use</text>
+              <text>Step 4: Encode output</text>
+              <br />
+              <br />
+              <text>Example for Step 3:</text>
+              <br />
+              <text>Note: If the untrusted input will be used to set an HTML attribute, then the Microsoft.Security.Application.HtmlAttributeEncode method should be used to encode the untrusted input.</text>
+              <text>Alternatively, if the untrusted input will be used within the context of JavaScript, then Microsoft.Security.Application.JavaScriptEncode should be used to encode.</text>
+              <br />
+              <code>  // Vulnerable code
+  // Note that untrusted input is being treated as an HTML attribute
+  Literal1.Text = "&lt;hr noshade size=[untrusted input here]&gt;";
+  
+  
+  // Modified code
+  Literal1.Text = "&lt;hr noshade size="+Microsoft.Security.Application.AntiXss.HtmlAttributeEncode([untrusted input here])+"&gt;";
+</code>
+              <br />
+              <text>Example for Step 4:</text>
+              <text>Some important things to remember about encoding outputs:</text>
+              <br />
+              <text>[1] Outputs should be encoded once.</text>
+              <text>[2] Output encoding should be done as close to the actual writing of the output as possible.  For example, if an application is reading user input, processing the input and then writing it back out in some form, then encoding should happen just before the output is written.</text>
+              <br />
+              <code>  // Incorrect sequence
+  protected void Button1_Click(object sender, EventArgs e)
+  {
+      // Read input
+      String Input = TextBox1.Text;
+      // Encode untrusted input
+      Input = Microsoft.Security.Application.AntiXss.HtmlEncode(Input);
+      // Process input
+      ...
+      // Write Output
+      Response.Write("The input you gave was"+Input);
+  }
+  
+  
+  // Correct Sequence
+  protected void Button1_Click(object sender, EventArgs e)
+  {
+      // Read input
+      String Input = TextBox1.Text;
+      // Process input
+      ...
+      // Encode untrusted input and write output
+      Response.Write("The input you gave was"+ 
+          Microsoft.Security.Application.AntiXss.HtmlEncode(Input));
+  }
+</code>
+            </fixRecommendation>
+            <fixRecommendation type="J2EE">
+              <text>** Input Data Validation:</text>
+              <br />
+              <text>While data validations may be provided as a user convenience on the "client" tier data, validation must be performed on the server-tier using Servlets.  Client-side validations are inherently insecure because they can be easily bypassed, e.g. by disabling Javascript.</text>
+              <br />
+              <text>A good design usually requires the web application framework to provide server-side utility routines to validate the following:</text>
+              <text>[1] Required field</text>
+              <text>[2] Field data type (all HTTP request parameters are Strings by default)</text>
+              <text>[3] Field length</text>
+              <text>[4] Field range</text>
+              <text>[5] Field options</text>
+              <text>[6] Field pattern</text>
+              <text>[7] Cookie values</text>
+              <text>[8] HTTP Response</text>
+              <br />
+              <text>A good practice is to implement the above routine as static methods in a "Validator" utility class.  The following sections describe an example validator class.</text>
+              <br />
+              <text>[1] Required field</text>
+              <text>Always check that the field is not null and its length is greater than zero, excluding leading and trailing white spaces.  </text>
+              <br />
+              <text>Example of how to validate required fields:</text>
+              <br />
+              <code>  // Java example to validate required fields
+  public Class Validator {
+      ...
+      public static boolean validateRequired(String value) {
+          boolean isFieldValid = false;
+          if (value != null &amp;&amp; value.trim().length() &gt; 0) {
+              isFieldValid = true;
+          }
+          return isFieldValid;
+      }
+      ...
+  }
+  ...
+  String fieldValue = request.getParameter("fieldName");
+  if (Validator.validateRequired(fieldValue)) {
+      // fieldValue is valid, continue processing request
+      ...
+  }
+</code>
+              <br />
+              <text>[2] Field data type</text>
+              <text>In web applications, input parameters are poorly typed.  For example, all HTTP request parameters or cookie values are of type String.  The developer is responsible for verifying that the input is of the correct data type.  Use the Java primitive wrapper classes to check if the field value can be safely converted to the desired primitive data type.</text>
+              <br />
+              <text>Example of how to validate a numeric field (type int):</text>
+              <br />
+              <code>  // Java example to validate that a field is an int number
+  public Class Validator {
+      ...
+      public static boolean validateInt(String value) {
+          boolean isFieldValid = false;
+          try {
+              Integer.parseInt(value);
+              isFieldValid = true;
+          } catch (Exception e) {
+              isFieldValid = false;
+          }
+          return isFieldValid;
+      }
+      ...
+  }
+  ...
+  // check if the HTTP request parameter is of type int
+  String fieldValue = request.getParameter("fieldName");
+  if (Validator.validateInt(fieldValue)) {
+      // fieldValue is valid, continue processing request
+      ...
+  }
+</code>
+              <br />
+              <text>A good practice is to convert all HTTP request parameters to their respective data types.  For example, the developer should store the "integerValue" of a request parameter in a request attribute and use it as shown in the following example:</text>
+              <br />
+              <code>  // Example to convert the HTTP request parameter to a primitive wrapper data type
+  // and store this value in a request attribute for further processing
+  String fieldValue = request.getParameter("fieldName");
+  if (Validator.validateInt(fieldValue)) {
+      // convert fieldValue to an Integer
+      Integer integerValue = Integer.getInteger(fieldValue);
+      // store integerValue in a request attribute
+      request.setAttribute("fieldName", integerValue);
+  }
+  ...
+  // Use the request attribute for further processing
+  Integer integerValue = (Integer)request.getAttribute("fieldName");
+  ...
+</code>
+              <br />
+              <text>The primary Java data types that the application should handle:</text>
+              <text>- Byte</text>
+              <text>- Short</text>
+              <text>- Integer</text>
+              <text>- Long</text>
+              <text>- Float</text>
+              <text>- Double</text>
+              <text>- Date</text>
+              <br />
+              <text>[3] Field length</text>
+              <text>Always ensure that the input parameter (whether HTTP request parameter or cookie value) is bounded by a minimum length and/or a maximum length.</text>
+              <br />
+              <text>Example to validate that the length of the userName field is between 8 and 20 characters:</text>
+              <br />
+              <code>  // Example to validate the field length
+  public Class Validator {
+      ...
+      public static boolean validateLength(String value, int minLength, int maxLength) {
+          String validatedValue = value;
+          if (!validateRequired(value)) {
+              validatedValue = "";
+          }
+          return (validatedValue.length() &gt;= minLength &amp;&amp;
+                      validatedValue.length() &lt;= maxLength);
+      }
+      ...
+  }
+  ...
+  String userName = request.getParameter("userName");
+  if (Validator.validateRequired(userName)) {
+      if (Validator.validateLength(userName, 8, 20)) {
+          // userName is valid, continue further processing
+          ...
+      }
+  }
+</code>
+              <br />
+              <text>[4] Field range</text>
+              <text>Always ensure that the input parameter is within a range as defined by the functional requirements.</text>
+              <br />
+              <text>Example to validate that the input numberOfChoices is between 10 and 20:</text>
+              <br />
+              <code>  // Example to validate the field range
+  public Class Validator {
+      ...
+      public static boolean validateRange(int value, int min, int max) {
+          return (value &gt;= min &amp;&amp; value &lt;= max);
+      }
+      ...
+  }
+  ...
+  String fieldValue = request.getParameter("numberOfChoices");
+  if (Validator.validateRequired(fieldValue)) {
+      if (Validator.validateInt(fieldValue)) {
+          int numberOfChoices = Integer.parseInt(fieldValue);
+          if (Validator.validateRange(numberOfChoices, 10, 20)) {
+              // numberOfChoices is valid, continue processing request
+              ...
+          }
+      }
+  }
+</code>
+              <br />
+              <text>[5] Field options</text>
+              <text>Often, the web application presents the user with a set of options to choose from, e.g. using the SELECT HTML tag, but fails to perform server-side validation to ensure that the selected value is one of the allowed options.  Remember that a malicious user can easily modify any option value.  Always validate the selected user value against the allowed options as defined by the functional requirements.</text>
+              <br />
+              <text>Example to validate the user selection against a list of allowed options:</text>
+              <br />
+              <code>  // Example to validate user selection against a list of options
+  public Class Validator {
+      ...
+      public static boolean validateOption(Object[] options, Object value) {
+          boolean isValidValue = false;
+          try {
+              List list = Arrays.asList(options);
+              if (list != null) {
+                  isValidValue = list.contains(value);
+              }
+          } catch (Exception e) {
+          }
+          return isValidValue;
+      }
+      ...
+  }
+  ...
+  // Allowed options
+  String[] options = {"option1", "option2", "option3");
+  // Verify that the user selection is one of the allowed options
+  String userSelection = request.getParameter("userSelection");
+  if (Validator.validateOption(options, userSelection)) {
+      // valid user selection, continue processing request
+      ...
+  }
+</code>
+              <br />
+              <text>[6] Field pattern</text>
+              <text>Always check that the user input matches a pattern as defined by the functionality requirements.  For example, if the userName field should only allow alpha-numeric characters, case insensitive, then use the following regular expression:</text>
+              <text>^[a-zA-Z0-9]*$</text>
+              <br />
+              <text>Java 1.3 or earlier versions do not include any regular expression packages.  Apache Regular Expression Package (see Resources below) is recommended for use with Java 1.3 to resolve this lack of support.  Example to perform regular expression validation:</text>
+              <br />
+              <code>  // Example to validate that a given value matches a specified pattern
+  // using the Apache regular expression package
+  import org.apache.regexp.RE;
+  import org.apache.regexp.RESyntaxException;
+  public Class Validator {
+      ...
+      public static boolean matchPattern(String value, String expression) {
+          boolean match = false;
+          if (validateRequired(expression)) {
+               RE r = new RE(expression);
+               match = r.match(value);             
+          }
+          return match;
+      }
+      ...
+  }
+  ...
+  // Verify that the userName request parameter is alphanumeric
+  String userName = request.getParameter("userName");
+  if (Validator.matchPattern(userName, "^[a-zA-Z0-9]*$")) {
+      // userName is valid, continue processing request
+      ...
+  }
+</code>
+              <br />
+              <text>Java 1.4 introduced a new regular expression package (java.util.regex).  Here is a modified version of Validator.matchPattern using the new Java 1.4 regular expression package:</text>
+              <br />
+              <code>  // Example to validate that a given value matches a specified pattern
+  // using the Java 1.4 regular expression package
+  import java.util.regex.Pattern;
+  import java.util.regexe.Matcher;
+  public Class Validator {
+      ...
+      public static boolean matchPattern(String value, String expression) {
+          boolean match = false;
+          if (validateRequired(expression)) {
+              match = Pattern.matches(expression, value);
+          }
+          return match;
+      }
+      ...
+  }
+</code>
+              <br />
+              <text>[7] Cookie value</text>
+              <text>Use the javax.servlet.http.Cookie object to validate the cookie value.  The same validation rules (described above) apply to cookie values depending on the application requirements (validate a required value, validate length, etc).</text>
+              <br />
+              <text>Example to validate a required cookie value:</text>
+              <br />
+              <code>  // Example to validate a required cookie value
+  // First retrieve all available cookies submitted in the HTTP request
+  Cookie[] cookies = request.getCookies();
+  if (cookies != null) {
+      // find the "user" cookie
+      for (int i=0; i&lt;cookies.length; ++i) {
+          if (cookies[i].getName().equals("user")) {
+              // validate the cookie value
+              if (Validator.validateRequired(cookies[i].getValue()) {
+                  // valid cookie value, continue processing request
+                  ...
+              }
+          }    
+      }
+  }
+</code>
+              <br />
+              <text>[8] HTTP Response</text>
+              <text>[8-1] Filter user input</text>
+              <text>To guard the application against cross-site scripting, sanitize HTML by converting sensitive characters to their corresponding character entities.  These are the HTML sensitive characters:</text>
+              <text>&lt; &gt; " ' % ; ) ( &amp; +</text>
+              <br />
+              <text>Example to filter a specified string by converting sensitive characters to their corresponding character entities:</text>
+              <br />
+              <code>  // Example to filter sensitive data to prevent cross-site scripting
+  public Class Validator {
+      ...
+      public static String filter(String value) {
+          if (value == null) {
+              return null;
+          }        
+          StringBuffer result = new StringBuffer(value.length());
+          for (int i=0; i&lt;value.length(); ++i) {
+              switch (value.charAt(i)) {
+              case '&lt;':
+                  result.append("&amp;lt;");
+                  break;
+              case '&gt;': 
+                  result.append("&amp;gt;");
+                  break;
+              case '"': 
+                  result.append("&amp;quot;");
+                  break;
+              case '\'': 
+                  result.append("&amp;#39;");
+                  break;
+              case '%': 
+                  result.append("&amp;#37;");
+                  break;
+              case ';': 
+                  result.append("&amp;#59;");
+                  break;
+              case '(': 
+                  result.append("&amp;#40;");
+                  break;
+              case ')': 
+                  result.append("&amp;#41;");
+                  break;
+              case '&amp;': 
+                  result.append("&amp;amp;");
+                  break;
+              case '+':
+                  result.append("&amp;#43;");
+                  break;
+              default:
+                  result.append(value.charAt(i));
+                  break;
+          }        
+          return result;
+      }
+      ...
+  }
+  ...
+  // Filter the HTTP response using Validator.filter
+  PrintWriter out = response.getWriter();
+  // set output response
+  out.write(Validator.filter(response));
+  out.close();
+</code>
+              <br />
+              <text>The Java Servlet API 2.3 introduced filters, which support the interception and transformation of HTTP requests or responses.</text>
+              <br />
+              <text>Example of using a Servlet Filter to sanitize the response using Validator.filter:</text>
+              <br />
+              <code>  // Example to filter all sensitive characters in the HTTP response using a Java Filter.
+  // This example is for illustration purposes since it will filter all content in the response, including HTML tags!
+  public class SensitiveCharsFilter implements Filter {
+      ...
+      public void doFilter(ServletRequest request,
+                      ServletResponse response,
+                      FilterChain chain)
+              throws IOException, ServletException {
+  
+          PrintWriter out = response.getWriter();
+          ResponseWrapper wrapper = new ResponseWrapper((HttpServletResponse)response);
+          chain.doFilter(request, wrapper);
+  
+          CharArrayWriter caw = new CharArrayWriter();
+          caw.write(Validator.filter(wrapper.toString()));
+          
+          response.setContentType("text/html");
+          response.setContentLength(caw.toString().length());
+          out.write(caw.toString());
+          out.close();
+      }
+      ...
+      public class CharResponseWrapper extends HttpServletResponseWrapper {
+          private CharArrayWriter output;
+  
+          public String toString() {
+              return output.toString();
+          }
+      
+          public CharResponseWrapper(HttpServletResponse response){
+              super(response);
+              output = new CharArrayWriter();
+          }
+          
+          public PrintWriter getWriter(){
+              return new PrintWriter(output);
+          }
+      }
+  } 
+  
+  }
+</code>
+              <br />
+              <text>[8-2] Secure the cookie</text>
+              <text>When storing sensitive data in a cookie, make sure to set the secure flag of the cookie in the HTTP response, using Cookie.setSecure(boolean flag) to instruct the browser to send the cookie  using  a secure protocol, such as HTTPS or SSL.</text>
+              <br />
+              <text>Example to secure the "user" cookie:</text>
+              <br />
+              <code>  // Example to secure a cookie, i.e. instruct the browser to
+  // send the cookie using a secure protocol
+  Cookie cookie = new Cookie("user", "sensitive");
+  cookie.setSecure(true);
+  response.addCookie(cookie);
+</code>
+              <br />
+              <text>RECOMMENDED JAVA TOOLS</text>
+              <text>The two main Java frameworkss for server-side validation are:</text>
+              <text>[1] Jakarta Commons Validator (integrated with Struts 1.1)</text>
+              <text>The Jakarta Commons Validator is a powerful framework that implements all the above data validation requirements.  These rules are configured in an XML file that defines input validation rules for form fields.  Struts supports output filtering of dangerous characters in the [8] HTTP Response by default on all data written using the Struts 'bean:write' tag.  This filtering may be disabled by setting the 'filter=false' flag.</text>
+              <br />
+              <text>Struts defines the following basic input validators, but custom validators may also be defined:</text>
+              <text>required: succeeds if the field contains any characters other than white space.</text>
+              <text>mask: succeeds if the value matches the regular expression given by the mask attribute.</text>
+              <text>range: succeeds if the value is within the values given by the min and max attributes ((value &gt;= min) &amp; (value &lt;= max)).</text>
+              <text>maxLength: succeeds if the field is length is less than or equal to the max attribute.</text>
+              <text>minLength: succeeds if the field is length is greater than or equal to the min attribute.</text>
+              <text>byte, short, integer, long, float, double: succeeds if the value can be converted to the corresponding primitive.</text>
+              <text>date: succeeds if the value represents a valid date. A date pattern may be provided.</text>
+              <text>creditCard: succeeds if the value could be a valid credit card number.</text>
+              <text>e-mail: succeeds if the value could be a valid e-mail address.</text>
+              <br />
+              <text>Example to validate the userName field of a loginForm using Struts Validator:</text>
+              <code>  &lt;form-validation&gt;
+      &lt;global&gt;
+          ...
+          &lt;validator name="required"
+              classname="org.apache.struts.validator.FieldChecks"
+              method="validateRequired"
+              msg="errors.required"&gt;
+          &lt;/validator&gt;
+          &lt;validator name="mask"
+              classname="org.apache.struts.validator.FieldChecks"
+              method="validateMask"
+              msg="errors.invalid"&gt;
+          &lt;/validator&gt;
+          ...
+      &lt;/global&gt;
+      &lt;formset&gt;
+          &lt;form name="loginForm"&gt;
+              &lt;!-- userName is required and is alpha-numeric case insensitive --&gt;
+              &lt;field property="userName" depends="required,mask"&gt;
+                  &lt;!-- message resource key to display if validation fails --&gt;
+                  &lt;msg name="mask" key="login.userName.maskmsg"/&gt;
+                  &lt;arg0 key="login.userName.displayname"/&gt;
+                  &lt;var&gt;
+                      &lt;var-name&gt;mask&lt;/var-name&gt;
+                      &lt;var-value&gt;^[a-zA-Z0-9]*$&lt;/var-value&gt;
+                  &lt;/var&gt;
+              &lt;/field&gt;
+          ...
+          &lt;/form&gt;
+          ...
+      &lt;/formset&gt;
+  &lt;/form-validation&gt;
+</code>
+              <br />
+              <text>[2] JavaServer Faces Technology</text>
+              <text>JavaServer Faces Technology is a set of Java APIs (JSR 127) to represent UI components, manage their state, handle events, and validate input.</text>
+              <br />
+              <text>The JavaServer Faces API implements the following basic validators, but custom validators may be defined:</text>
+              <text>validate_doublerange: registers a DoubleRangeValidator on a component.</text>
+              <text>validate_length: registers a LengthValidator on a component.</text>
+              <text>validate_longrange: registers a LongRangeValidator on a component.</text>
+              <text>validate_required: registers a RequiredValidator on a component.</text>
+              <text>validate_stringrange: registers a StringRangeValidator on a component.</text>
+              <text>validator: registers a custom Validator on a component.</text>
+              <br />
+              <text>The JavaServer Faces API defines the following UIInput and UIOutput Renderers (Tags):</text>
+              <text>input_date: accepts a java.util.Date formatted with a java.text.Date instance.</text>
+              <text>output_date: displays a java.util.Date formatted with a java.text.Date instance.</text>
+              <text>input_datetime: accepts a java.util.Date formatted with a java.text.DateTime instance.</text>
+              <text>output_datetime: displays a java.util.Date formatted with a java.text.DateTime instance.</text>
+              <text>input_number: displays a numeric data type (java.lang.Number or primitive), formatted with a java.text.NumberFormat.</text>
+              <text>output_number: displays a numeric data type (java.lang.Number or primitive), formatted with a java.text.NumberFormat.</text>
+              <text>input_text: accepts a text string of one line.</text>
+              <text>output_text: displays a text string of one line.</text>
+              <text>input_time: accepts a java.util.Date, formatted with a java.text.DateFormat time instance.</text>
+              <text>output_time: displays a java.util.Date, formatted with a java.text.DateFormat time instance.</text>
+              <text>input_hidden: allows a page author to include a hidden variable in a page.</text>
+              <text>input_secret: accepts one line of text with no spaces and displays it as a set of asterisks as it is typed.</text>
+              <text>input_textarea: accepts multiple lines of text.</text>
+              <text>output_errors: displays error messages for an entire page or error messages associated with a specified client identifier.</text>
+              <text>output_label: displays a nested component as a label for a specified input field.</text>
+              <text>output_message: displays a localized message.</text>
+              <br />
+              <text>Example to validate the userName field of a loginForm using JavaServer Faces:</text>
+              <code>  &lt;%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %&gt;
+  &lt;%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %&gt;
+  ...
+  &lt;jsp:useBean id="UserBean"
+      class="myApplication.UserBean" scope="session" /&gt;
+  &lt;f:use_faces&gt;
+    &lt;h:form formName="loginForm" &gt;
+      &lt;h:input_text id="userName" size="20" modelReference="UserBean.userName"&gt;
+          &lt;f:validate_required/&gt;
+          &lt;f:validate_length minimum="8" maximum="20"/&gt;    
+      &lt;/h:input_text&gt;
+      &lt;!-- display errors if present --&gt;
+      &lt;h:output_errors id="loginErrors" clientId="userName"/&gt;
+      &lt;h:command_button id="submit" label="Submit" commandName="submit" /&gt;&lt;p&gt;
+    &lt;/h:form&gt;
+  &lt;/f:use_faces&gt;
+</code>
+              <br />
+              <br />
+              <text>REFERENCES</text>
+              <text>Java API 1.3 - </text>
+              <link target="http://java.sun.com/j2se/1.3/docs/api/">http://java.sun.com/j2se/1.3/docs/api/</link>
+              <text>Java API 1.4 - </text>
+              <link target="http://java.sun.com/j2se/1.4/docs/api/">http://java.sun.com/j2se/1.4/docs/api/</link>
+              <text>Java Servlet API 2.3 - </text>
+              <link target="http://java.sun.com/products/servlet/2.3/javadoc/">http://java.sun.com/products/servlet/2.3/javadoc/</link>
+              <text>Java Regular Expression Package - </text>
+              <link target="http://jakarta.apache.org/regexp/">http://jakarta.apache.org/regexp/</link>
+              <text>Jakarta Validator - </text>
+              <link target="http://jakarta.apache.org/commons/validator/">http://jakarta.apache.org/commons/validator/</link>
+              <text>JavaServer Faces Technology - </text>
+              <link target="http://java.sun.com/j2ee/javaserverfaces/">http://java.sun.com/j2ee/javaserverfaces/</link>
+              <br />
+              <text>** Error Handling:</text>
+              <br />
+              <text>Many J2EE web application architectures follow the Model View Controller (MVC) pattern.  In this pattern a Servlet acts as a Controller.  A Servlet delegates the application processing to a JavaBean such as an EJB Session Bean (the Model).  The Servlet then forwards the request to a JSP (View) to render the processing results.  Servlets should check all input, output, return codes, error codes and known exceptions to ensure that the expected processing actually occurred.</text>
+              <br />
+              <text>While data validation protects applications against malicious data tampering, a sound error handling strategy is necessary to prevent the application from inadvertently disclosing internal error messages such as exception stack traces.  A good error handling strategy addresses the following items:</text>
+              <br />
+              <text>[1] Defining Errors</text>
+              <text>[2] Reporting Errors</text>
+              <text>[3] Rendering Errors</text>
+              <text>[4] Error Mapping</text>
+              <br />
+              <text>[1] Defining Errors</text>
+              <text>Hard-coded error messages in the application layer (e.g. Servlets) should be avoided.  Instead, the application should use error keys that map to known application failures.  A good practice is to define error keys that map to validation rules for HTML form fields or other bean properties.  For example, if the "user_name" field is required, is alphanumeric, and must be unique in the database, then the following error keys should be defined:</text>
+              <br />
+              <text>(a) ERROR_USERNAME_REQUIRED: this error key is used to display a message notifying the user that the "user_name" field is required;</text>
+              <text>(b) ERROR_USERNAME_ALPHANUMERIC: this error key is used to display a message notifying the user that the "user_name" field should be alphanumeric;</text>
+              <text>(c) ERROR_USERNAME_DUPLICATE: this error key is used to display a message notifying the user that the "user_name" value is a duplicate in the database;</text>
+              <text>(d) ERROR_USERNAME_INVALID: this error key is used to display a generic message notifying the user that the "user_name" value is invalid;</text>
+              <br />
+              <text>A good practice is to define the following framework Java classes which are used to store and report application errors:</text>
+              <br />
+              <text>- ErrorKeys: defines all error keys</text>
+              <br />
+              <code>      // Example: ErrorKeys defining the following error keys:    
+      //    - ERROR_USERNAME_REQUIRED
+      //    - ERROR_USERNAME_ALPHANUMERIC
+      //    - ERROR_USERNAME_DUPLICATE
+      //    - ERROR_USERNAME_INVALID
+      //    ...
+      public Class ErrorKeys {
+          public static final String ERROR_USERNAME_REQUIRED = "error.username.required";
+          public static final String ERROR_USERNAME_ALPHANUMERIC = "error.username.alphanumeric";
+          public static final String ERROR_USERNAME_DUPLICATE = "error.username.duplicate";
+          public static final String ERROR_USERNAME_INVALID = "error.username.invalid";
+          ...
+      }
+</code>
+              <indentText>
+              </indentText>
+              <text>- Error: encapsulates an individual error</text>
+              <br />
+              <code>      // Example: Error encapsulates an error key.
+      // Error is serializable to support code executing in multiple JVMs.
+      public Class Error implements Serializable {
+          
+          // Constructor given a specified error key
+          public Error(String key) {
+              this(key, null);
+          }
+          
+          // Constructor given a specified error key and array of placeholder objects
+          public Error(String key, Object[] values) {
+              this.key = key;
+              this.values = values;
+          }
+          
+          // Returns the error key
+          public String getKey() {
+              return this.key;
+          }
+          
+          // Returns the placeholder values
+          public Object[] getValues() {
+              return this.values;
+          }
+          
+          private String key = null;
+          private Object[] values = null;
+      }    
+</code>
+              <br />
+              <text>- Errors: encapsulates a Collection of errors</text>
+              <br />
+              <code>      // Example: Errors encapsulates the Error objects being reported to the presentation layer.
+      // Errors are stored in a HashMap where the key is the bean property name and value is an
+      // ArrayList of Error objects.
+      public Class Errors implements Serializable {
+      
+          // Adds an Error object to the Collection of errors for the specified bean property.
+          public void addError(String property, Error error) {
+              ArrayList propertyErrors = (ArrayList)errors.get(property);
+              if (propertyErrors == null) {
+                  propertyErrors = new ArrayList();
+                  errors.put(property, propertyErrors);
+              }
+              propertyErrors.put(error);            
+          }
+          
+          // Returns true if there are any errors
+          public boolean hasErrors() {
+              return (errors.size &gt; 0);
+          }
+          
+          // Returns the Errors for the specified property
+          public ArrayList getErrors(String property) {
+              return (ArrayList)errors.get(property);
+          }
+  
+          private HashMap errors = new HashMap();
+      }
+</code>
+              <br />
+              <text>Using the above framework classes, here is an example to process validation errors of the "user_name" field:</text>
+              <br />
+              <code>  // Example to process validation errors of the "user_name" field.
+  Errors errors = new Errors();
+  String userName = request.getParameter("user_name");
+  // (a) Required validation rule
+  if (!Validator.validateRequired(userName)) {
+      errors.addError("user_name", new Error(ErrorKeys.ERROR_USERNAME_REQUIRED));
+  } // (b) Alpha-numeric validation rule
+  else if (!Validator.matchPattern(userName, "^[a-zA-Z0-9]*$")) {
+      errors.addError("user_name", new Error(ErrorKeys.ERROR_USERNAME_ALPHANUMERIC));
+  }
+  else
+  {
+      // (c) Duplicate check validation rule
+      // We assume that there is an existing UserValidationEJB session bean that implements
+      // a checkIfDuplicate() method to verify if the user already exists in the database.
+      try {
+          ...        
+          if (UserValidationEJB.checkIfDuplicate(userName)) {
+              errors.addError("user_name", new Error(ErrorKeys.ERROR_USERNAME_DUPLICATE));
+          }
+      } catch (RemoteException e) {
+          // log the error
+          logger.error("Could not validate user for specified userName: " + userName);
+          errors.addError("user_name", new Error(ErrorKeys.ERROR_USERNAME_DUPLICATE);
+      }
+  }
+  // set the errors object in a request attribute called "errors"
+  request.setAttribute("errors", errors);
+  ...
+</code>
+              <br />
+              <text>[2] Reporting Errors</text>
+              <text>There are two ways to report web-tier application errors:</text>
+              <text>(a) Servlet Error Mechanism</text>
+              <text>(b) JSP Error Mechanism</text>
+              <br />
+              <text>[2-a] Servlet Error Mechanism</text>
+              <text>A Servlet may report errors by:</text>
+              <text>- forwarding to the input JSP (having already stored the errors in a request attribute), OR</text>
+              <text>- calling response.sendError with an HTTP error code argument, OR</text>
+              <text>- throwing an exception</text>
+              <br />
+              <text>It is good practice to process all known application errors (as described in section [1]), store them in a request attribute, and forward to the input JSP. The input JSP should display the error messages and prompt the user to re-enter the data.  The following example illustrates how to forward to an input JSP (userInput.jsp):</text>
+              <br />
+              <code>  // Example to forward to the userInput.jsp following user validation errors
+  RequestDispatcher rd = getServletContext().getRequestDispatcher("/user/userInput.jsp");
+  if (rd != null) {
+      rd.forward(request, response);
+  }
+</code>
+              <br />
+              <text>If the Servlet cannot forward to a known JSP page, the second option is to report an error using the response.sendError method with HttpServletResponse.SC_INTERNAL_SERVER_ERROR (status code 500) as an argument.  Refer to the javadoc of javax.servlet.http.HttpServletResponse for more details on the various HTTP status codes.</text>
+              <br />
+              <text>Example to return a HTTP error:</text>
+              <code>  // Example to return a HTTP error code
+  RequestDispatcher rd = getServletContext().getRequestDispatcher("/user/userInput.jsp");
+  if (rd == null) {
+      // messages is a resource bundle with all message keys and values
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                              messages.getMessage(ErrorKeys.ERROR_USERNAME_INVALID));
+  }
+</code>
+              <br />
+              <text>As a last resort, Servlets can throw an exception, which must be a subclass of one of the following classes:</text>
+              <text>- RuntimeException</text>
+              <text>- ServletException</text>
+              <text>- IOException</text>
+              <br />
+              <text>[2-b] JSP Error Mechanism</text>
+              <text>JSP pages provide a mechanism to handle runtime exceptions by defining an errorPage directive as shown in the following example:</text>
+              <code>      &lt;%@ page errorPage="/errors/userValidation.jsp" %&gt;
+</code>
+              <br />
+              <text>Uncaught JSP exceptions are forwarded to the specified errorPage, and the original exception is set in a request parameter called javax.servlet.jsp.jspException.  The error page must include a isErrorPage directive:</text>
+              <code>      &lt;%@ page isErrorPage="true" %&gt;
+</code>
+              <br />
+              <text>The isErrorPage directive causes the "exception" variable to be initialized to the exception object being thrown.</text>
+              <br />
+              <text>[3] Rendering Errors</text>
+              <text>The J2SE Internationalization APIs provide utility classes for externalizing application resources and formatting messages including:</text>
+              <br />
+              <text>(a) Resource Bundles</text>
+              <text>(b) Message Formatting</text>
+              <br />
+              <text>[3-a] Resource Bundles</text>
+              <text>Resource bundles support internationalization by separating localized data from the source code that uses it.  Each resource bundle stores a map of key/value pairs for a specific locale.</text>
+              <br />
+              <text>It is common to use or extend java.util.PropertyResourceBundle, which stores the content in an external properties file as shown in the following example:</text>
+              <br />
+              <code>  ################################################
+  # ErrorMessages.properties
+  ################################################
+  # required user name error message
+  error.username.required=User name field is required
+  
+  # invalid user name format
+  error.username.alphanumeric=User name must be alphanumeric
+  
+  # duplicate user name error message
+  error.username.duplicate=User name {0} already exists, please choose another one
+  
+  ...
+</code>
+              <br />
+              <text>Multiple resources can be defined to support different locales (hence the name resource bundle).  For example, ErrorMessages_fr.properties can be defined to support the French member of the bundle family.  If the resource member of the requested locale does not exist, the default member is used.  In the above example, the default resource is ErrorMessages.properties.  Depending on the user's locale, the application (JSP or Servlet) retrieves content from the appropriate resource.</text>
+              <br />
+              <text>[3-b] Message Formatting</text>
+              <text>The J2SE standard class java.util.MessageFormat provides a generic way to create messages with replacement placeholders.  A MessageFormat object contains a pattern string with embedded format specifiers as shown below:</text>
+              <br />
+              <code>  // Example to show how to format a message using placeholder parameters
+  String pattern = "User name {0} already exists, please choose another one";
+  String userName = request.getParameter("user_name");
+  Object[] args = new Object[1];
+  args[0] = userName;
+  String message = MessageFormat.format(pattern, args);
+</code>
+              <br />
+              <text>Here is a more comprehensive example to render error messages using ResourceBundle and MessageFormat:</text>
+              <br />
+              <code>  // Example to render an error message from a localized ErrorMessages resource (properties file)
+  // Utility class to retrieve locale-specific error messages
+  public Class ErrorMessageResource {
+      
+      // Returns the error message for the specified error key in the environment locale
+      public String getErrorMessage(String errorKey) {
+          return getErrorMessage(errorKey, defaultLocale);
+      }
+      
+      // Returns the error message for the specified error key in the specified locale
+      public String getErrorMessage(String errorKey, Locale locale) {
+          return getErrorMessage(errorKey, null, locale);
+      }
+      
+      // Returns a formatted error message for the specified error key in the specified locale
+      public String getErrorMessage(String errorKey, Object[] args, Locale locale) {    
+          // Get localized ErrorMessageResource
+          ResourceBundle errorMessageResource = ResourceBundle.getBundle("ErrorMessages", locale);
+          // Get localized error message
+          String errorMessage = errorMessageResource.getString(errorKey);
+          if (args != null) {
+              // Format the message using the specified placeholders args
+              return MessageFormat.format(errorMessage, args);
+          } else {
+              return errorMessage;
+          }
+      }
+      
+      // default environment locale
+      private Locale defaultLocale = Locale.getDefaultLocale();
+  }
+  ...
+  // Get the user's locale
+  Locale userLocale = request.getLocale();
+  // Check if there were any validation errors
+  Errors errors = (Errors)request.getAttribute("errors");
+  if (errors != null &amp;&amp; errors.hasErrors()) {
+      // iterate through errors and output error messages corresponding to the "user_name" property
+      ArrayList userNameErrors = errors.getErrors("user_name");
+      ListIterator iterator = userNameErrors.iterator();
+      while (iterator.hasNext()) {
+          // Get the next error object
+          Error error = (Error)iterator.next();
+          String errorMessage = ErrorMessageResource.getErrorMessage(error.getKey(), userLocale);
+          output.write(errorMessage + "\r\n");
+      }
+  }
+</code>
+              <br />
+              <text>It is recommended to define a custom JSP tag (e.g. displayErrors), to iterate through and render error messages as shown in the above example.</text>
+              <br />
+              <text>[4] Error Mapping</text>
+              <text>Normally, the Servlet Container will return a default error page corresponding to either the response status code or the exception.  A mapping between the status code or the exception and a web resource may be specified using custom error pages. It is a good practice to develop static error pages that do not disclose internal error states (by default, most Servlet containers will report internal error messages).  This mapping is configured in the Web Deployment Descriptor (web.xml) as specified in the following example:</text>
+              <br />
+              <code>  &lt;!-- Mapping of HTTP error codes and application exceptions to error pages --&gt;
+  &lt;error-page&gt;
+    &lt;exception-type&gt;UserValidationException&lt;/exception-type&gt;
+    &lt;location&gt;/errors/validationError.html&lt;/error-page&gt;
+  &lt;/error-page&gt;
+  &lt;error-page&gt;
+    &lt;error-code&gt;500&lt;/exception-type&gt;
+    &lt;location&gt;/errors/internalError.html&lt;/error-page&gt;
+  &lt;/error-page&gt;
+  &lt;error-page&gt;
+  ...
+  &lt;/error-page&gt;
+  ...
+</code>
+              <br />
+              <br />
+              <text>RECOMMENDED JAVA TOOLS</text>
+              <text>The two main Java frameworkss for server-side validation are:</text>
+              <text>[1] Jakarta Commons Validator (integrated with Struts 1.1)</text>
+              <text>The Jakarta Commons Validator is a Java framework that defines the error handling mechanism as described above.  Validation rules are configured in an XML file that defines input validation rules for form fields and the corresponding validation error keys.  Struts provides internationalization support to build localized applications using resource bundles and message formatting.</text>
+              <br />
+              <text>Example to validate the userName field of a loginForm using Struts Validator:</text>
+              <code>  &lt;form-validation&gt;
+      &lt;global&gt;
+          ...
+          &lt;validator name="required"
+              classname="org.apache.struts.validator.FieldChecks"
+              method="validateRequired"
+              msg="errors.required"&gt;
+          &lt;/validator&gt;
+          &lt;validator name="mask"
+              classname="org.apache.struts.validator.FieldChecks"
+              method="validateMask"
+              msg="errors.invalid"&gt;
+          &lt;/validator&gt;
+          ...
+      &lt;/global&gt;
+      &lt;formset&gt;
+          &lt;form name="loginForm"&gt;
+              &lt;!-- userName is required and is alpha-numeric case insensitive --&gt;
+              &lt;field property="userName" depends="required,mask"&gt;
+                  &lt;!-- message resource key to display if validation fails --&gt;
+                  &lt;msg name="mask" key="login.userName.maskmsg"/&gt;
+                  &lt;arg0 key="login.userName.displayname"/&gt;
+                  &lt;var&gt;
+                      &lt;var-name&gt;mask&lt;/var-name&gt;
+                      &lt;var-value&gt;^[a-zA-Z0-9]*$&lt;/var-value&gt;
+                  &lt;/var&gt;
+              &lt;/field&gt;
+          ...
+          &lt;/form&gt;
+          ...
+      &lt;/formset&gt;
+  &lt;/form-validation&gt;
+</code>
+              <br />
+              <text>The Struts JSP tag library defines the "errors" tag that conditionally displays a set of accumulated error messages as shown in the following example:</text>
+              <br />
+              <code>  &lt;%@ page language="java" %&gt;
+  &lt;%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %&gt;
+  &lt;%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %&gt;
+  &lt;html:html&gt;
+  &lt;head&gt;
+  &lt;body&gt;
+      &lt;html:form action="/logon.do"&gt;    
+      &lt;table border="0" width="100%"&gt;
+      &lt;tr&gt;
+          &lt;th align="right"&gt;
+              &lt;html:errors property="username"/&gt;
+              &lt;bean:message key="prompt.username"/&gt;
+          &lt;/th&gt;
+          &lt;td align="left"&gt;
+              &lt;html:text property="username" size="16"/&gt;
+          &lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+      &lt;td align="right"&gt;
+          &lt;html:submit&gt;&lt;bean:message key="button.submit"/&gt;&lt;/html:submit&gt;
+      &lt;/td&gt;
+      &lt;td align="right"&gt;
+          &lt;html:reset&gt;&lt;bean:message key="button.reset"/&gt;&lt;/html:reset&gt;
+      &lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;/table&gt;
+      &lt;/html:form&gt;
+  &lt;/body&gt;
+  &lt;/html:html&gt;
+</code>
+              <br />
+              <text>[2] JavaServer Faces Technology</text>
+              <text>JavaServer Faces Technology is a set of Java APIs (JSR 127) to represent UI components, manage their state, handle events, validate input, and support internationalization.</text>
+              <br />
+              <text>The JavaServer Faces API defines the "output_errors" UIOutput Renderer, which displays error messages for an entire page or error messages associated with a specified client identifier.</text>
+              <br />
+              <text>Example to validate the userName field of a loginForm using JavaServer Faces:</text>
+              <code>  &lt;%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %&gt;
+  &lt;%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %&gt;
+  ...
+  &lt;jsp:useBean id="UserBean"
+      class="myApplication.UserBean" scope="session" /&gt;
+  &lt;f:use_faces&gt;
+    &lt;h:form formName="loginForm" &gt;
+      &lt;h:input_text id="userName" size="20" modelReference="UserBean.userName"&gt;
+          &lt;f:validate_required/&gt;
+          &lt;f:validate_length minimum="8" maximum="20"/&gt;    
+      &lt;/h:input_text&gt;
+      &lt;!-- display errors if present --&gt;
+      &lt;h:output_errors id="loginErrors" clientId="userName"/&gt;
+      &lt;h:command_button id="submit" label="Submit" commandName="submit" /&gt;&lt;p&gt;
+    &lt;/h:form&gt;
+  &lt;/f:use_faces&gt;
+</code>
+              <br />
+              <text>REFERENCES</text>
+              <text>Java API 1.3 - </text>
+              <link target="http://java.sun.com/j2se/1.3/docs/api/">http://java.sun.com/j2se/1.3/docs/api/</link>
+              <text>Java API 1.4 - </text>
+              <link target="http://java.sun.com/j2se/1.4/docs/api/">http://java.sun.com/j2se/1.4/docs/api/</link>
+              <text>Java Servlet API 2.3 - </text>
+              <link target="http://java.sun.com/products/servlet/2.3/javadoc/">http://java.sun.com/products/servlet/2.3/javadoc/</link>
+              <text>Java Regular Expression Package - </text>
+              <link target="http://jakarta.apache.org/regexp/">http://jakarta.apache.org/regexp/</link>
+              <text>Jakarta Validator - </text>
+              <link target="http://jakarta.apache.org/commons/validator/">http://jakarta.apache.org/commons/validator/</link>
+              <text>JavaServer Faces Technology - </text>
+              <link target="http://java.sun.com/j2ee/javaserverfaces/">http://java.sun.com/j2ee/javaserverfaces/</link>
+            </fixRecommendation>
+            <fixRecommendation type="PHP">
+              <text>** Input Data Validation:</text>
+              <br />
+              <text>While data validations may be provided as a user convenience on the client-tier, data validation must always be performed on the server-tier.  Client-side validations are inherently insecure because they can be easily bypassed, e.g. by disabling Javascript.</text>
+              <br />
+              <text>A good design usually requires the web application framework to provide server-side utility routines to validate the following:</text>
+              <text>[1] Required field</text>
+              <text>[2] Field data type (all HTTP request parameters are Strings by default)</text>
+              <text>[3] Field length</text>
+              <text>[4] Field range</text>
+              <text>[5] Field options</text>
+              <text>[6] Field pattern</text>
+              <text>[7] Cookie values</text>
+              <text>[8] HTTP Response</text>
+              <br />
+              <text>A good practice is to implement a function or functions that validates each application parameter.  The following sections describe some example checking.</text>
+              <br />
+              <text>[1] Required field</text>
+              <text>Always check that the field is not null and its length is greater than zero, excluding leading and trailing white spaces.</text>
+              <br />
+              <text>Example of how to validate required fields:</text>
+              <br />
+              <code>  // PHP example to validate required fields
+  function validateRequired($input) {
+      ...
+      $pass = false;
+      if (strlen(trim($input))&gt;0){
+          $pass = true;
+      }
+      return $pass;
+      ...
+  }
+  ...
+  if (validateRequired($fieldName)) {
+      // fieldName is valid, continue processing request
+      ...
+  }
+</code>
+              <br />
+              <br />
+              <text>[2] Field data type</text>
+              <text>In web applications, input parameters are poorly typed.  For example, all HTTP request parameters or cookie values are of type String.  The developer is responsible for verifying the input is of the correct data type.</text>
+              <br />
+              <text>[3] Field length</text>
+              <text>Always ensure that the input parameter (whether HTTP request parameter or cookie value) is bounded by a minimum length and/or a maximum length.</text>
+              <br />
+              <text>[4] Field range</text>
+              <text>Always ensure that the input parameter is within a range as defined by the functional requirements.</text>
+              <br />
+              <text>[5] Field options</text>
+              <text>Often, the web application presents the user with a set of options to choose from, e.g. using the SELECT HTML tag, but fails to perform server-side validation to ensure that the selected value is one of the allowed options.  Remember that a malicious user can easily modify any option value.  Always validate the selected user value against the allowed options as defined by the functional requirements.</text>
+              <br />
+              <text>[6] Field pattern</text>
+              <text>Always check that user input matches a pattern as defined by the functionality requirements.  For example, if the userName field should only allow alpha-numeric characters, case insensitive, then use the following regular expression:</text>
+              <text>^[a-zA-Z0-9]+$</text>
+              <br />
+              <text>[7] Cookie value</text>
+              <text>The same validation rules (described above) apply to cookie values depending on the application requirements, e.g. validate a required value, validate length, etc.</text>
+              <br />
+              <text>[8] HTTP Response</text>
+              <br />
+              <text>[8-1] Filter user input</text>
+              <text>To guard the application against cross-site scripting, the developer should sanitize HTML by converting sensitive characters to their corresponding character entities.  These are the HTML sensitive characters:</text>
+              <text>&lt; &gt; " ' % ; ) ( &amp; +</text>
+              <br />
+              <text>PHP includes some automatic sanitization utility functions, such as htmlentities():</text>
+              <br />
+              <code>  $input = htmlentities($input, ENT_QUOTES, 'UTF-8');
+</code>
+              <br />
+              <text>In addition, in order to avoid UTF-7 variants of Cross-site Scripting, you should explicitly define the Content-Type header of the response, for example:</text>
+              <br />
+              <code>  &lt;?php
+  
+  header('Content-Type: text/html; charset=UTF-8');
+  
+  ?&gt;
+</code>
+              <br />
+              <text>[8-2] Secure the cookie</text>
+              <br />
+              <text>When storing sensitive data in a cookie and transporting it over SSL, make sure that you first set the secure flag of the cookie in the HTTP response. This will instruct the browser to only use that cookie over SSL connections.</text>
+              <br />
+              <text>You can use the following code example, for securing the cookie:</text>
+              <br />
+              <code>  &lt;$php
+  
+      $value = "some_value";
+      $time = time()+3600;
+      $path = "/application/";
+      $domain = ".example.com";
+      $secure = 1;
+  
+      setcookie("CookieName", $value, $time, $path, $domain, $secure, TRUE);
+  ?&gt;
+  
+</code>
+              <br />
+              <text>In addition, we recommend that you use the HttpOnly flag. When the HttpOnly flag is set to TRUE the cookie will be made accessible only through the HTTP protocol. This means that the cookie won't be accessible by scripting languages, such as JavaScript. This setting can effectively help to reduce identity theft through XSS attacks (although it is not supported by all browsers).</text>
+              <br />
+              <text>The HttpOnly flag was Added in PHP 5.2.0.</text>
+              <br />
+              <text>REFERENCES</text>
+              <br />
+              <text>[1] Mitigating Cross-site Scripting With HTTP-only Cookies: </text>
+              <link target="http://msdn2.microsoft.com/en-us/library/ms533046.aspx">http://msdn2.microsoft.com/en-us/library/ms533046.aspx</link>
+              <text>[2] PHP Security Consortium: </text>
+              <link target="http://phpsec.org/">http://phpsec.org/</link>
+              <text>[3] PHP &amp; Web Application Security Blog (Chris Shiflett): </text>
+              <link target="http://shiflett.org/">http://shiflett.org/</link>
+            </fixRecommendation>
+          </fixRecommendations>
+        </advisory>
+        <Severity>High</Severity>
+        <Invasive>False</Invasive>
+      </IssueType>
+      <IssueType ID="constTransient" Count="1">
+        <RemediationID>fix_60310</RemediationID>
+        <advisory>
+          <name>Session Identifier Not Updated</name>
+          <testDescription>Application-level test</testDescription>
+          <threatClassification>
+            <name>Session Fixation</name>
+            <reference>http://projects.webappsec.org/Session-Fixation</reference>
+          </threatClassification>
+          <testTechnicalDescription>
+            <text>Authenticating a user, or otherwise establishing a new user session, without invalidating any existing session identifier, gives an attacker the opportunity to steal authenticated sessions.</text>
+            <br />
+            <text>Such a scenario is commonly observed when:</text>
+            <text>[1] A web application authenticates a user without first invalidating the existing session, thereby continuing to use the session already associated with the user</text>
+            <text>[2] An attacker is able to force a known session identifier on a user so that, once the user authenticates, the attacker has access to the authenticated session</text>
+            <text>[3] The application or container uses predictable session identifiers.</text>
+            <br />
+            <text>In the generic exploit of session fixation vulnerabilities, an attacker creates a new session on a web application and records the associated session identifier. The attacker then causes the victim to associate, and possibly authenticate, against the server using that session identifier, giving the attacker access to the user's account through the active session.</text>
+            <br />
+            <text>AppScan has found that the session identifiers before and after the login process were not updated, which means that user impersonation may be possible. Preliminary knowledge of the session identifier value may enable a remote attacker to pose as a logged-in legitimate user.</text>
+            <text>The flow of attack:</text>
+            <text>a) An attacker uses the victim's browser to open the login form of the vulnerable site.</text>
+            <text>b) Once the form is open, the attacker writes down the session identifier value, and waits.</text>
+            <text>c) When the victim logs into the vulnerable site, his session identifier is not updated.</text>
+            <text>d) The attacker can then use the session identifier value to impersonate the victim user, and operate on his behalf.</text>
+            <br />
+            <text>The session identifier value can be obtained by utilizing a Cross-Site Scripting vulnerability, causing the victim's browser to use a predefined session identifier when contacting the vulnerable site, or by launching a Session Fixation attack that will cause the site to present a predefined session identifier to the victim's browser.</text>
+          </testTechnicalDescription>
+          <causes>
+            <cause>Insecure web application programming or configuration</cause>
+          </causes>
+          <securityRisks>
+            <securityRisk>It is possible to steal or manipulate customer session and cookies, which might be used to impersonate a legitimate user, allowing the hacker to view or alter user records, and to perform transactions as that user</securityRisk>
+          </securityRisks>
+          <affectedProducts>
+            <affectedProduct>This issue may affect different types of products.</affectedProduct>
+          </affectedProducts>
+          <cwe>
+            <link target="http://cwe.mitre.org/data/definitions/304.html" id="CWE-304">304</link>
+          </cwe>
+          <references>
+            <link target="http://www.acrossecurity.com/papers/session_fixation.pdf">"Session Fixation Vulnerability in Web-based Applications", By Mitja Kolsek - Acros Security</link>
+            <link target="http://il2.php.net/session#session.security">PHP Manual, Session Handling Functions, Sessions and security</link>
+          </references>
+          <fixRecommendations>
+            <fixRecommendation type="General">
+              <text>Prevent user ability to manipulate session ID. Do not accept session IDs provided by the user's browser at login; always generate a new session to which the user will log in if successfully authenticated. </text>
+              <text>Invalidate any existing session identifiers prior to authorizing a new user session.</text>
+              <text>For platforms such as ASP that do not generate new values for sessionid cookies, utilize a secondary cookie. In this approach, set a secondary cookie on the user's browser to a random value and set a session variable to the same value. If the session variable and the cookie value ever don't match, invalidate the session, and force the user to log on again.</text>
+            </fixRecommendation>
+          </fixRecommendations>
+        </advisory>
+        <Severity>Medium</Severity>
+        <Invasive>False</Invasive>
+      </IssueType>
+    </IssueTypes>
+    <Issues>
+      <Issue IssueTypeID="attCrossSiteScripting" Noise="False">
+        <Url>https://staging.example.com/py/confwatch</Url>
+        <Severity>High</Severity>
+        <Entity Name="confwatch" Type="Page" />
+        <Variant ID="989">
+          <Comments />
+          <Difference>Path:  /py/confwatch -&gt; ?"onmouseover="alert(370)"</Difference>
+          <Reasoning>The test result seems to indicate a vulnerability because Appscan successfully embedded a script in the response, which will be executed when the page loads in the user's browser.</Reasoning>
+          <AdditionalData />
+          <CWE>79</CWE>
+          <CVE />
+          <ValidationDataLocationAtTestResponse>
+            <Validation Location="89504" Length="26" String="?&quot;onmouseover=&quot;alert(370)&quot;" />
+          </ValidationDataLocationAtTestResponse>
+          <OriginalHttpTraffic>GET /py/confwatch HTTP/1.1
+Cookie: COOKIE_last_login=ed.example;
+Accept-Language: en-US
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Referer: https://staging.example.com/py/splash.pt
+Host: staging.example.com
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Win64; x64; Trident/4.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; Tablet PC 2.0)
+
+
+HTTP/1.1 301 Moved Permanently
+Date: Tue, 03 Dec 2013 18:27:05 GMT
+Server: Apache/2.2.3 (Red Hat)
+Location: https://staging.example.com/py/confwatch/
+Content-Length: 349
+Content-Type: text/html; charset=iso-8859-1
+
+&lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;title&gt;301 Moved Permanently&lt;/title&gt;
+&lt;/head&gt;&lt;body&gt;
+&lt;h1&gt;Moved Permanently&lt;/h1&gt;
+&lt;p&gt;The document has moved &lt;a href="https://staging.example.com/py/confwatch/"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;address&gt;Apache/2.2.3 (Red Hat) Server at staging.example.com Port 443&lt;/address&gt;
+&lt;/body&gt;&lt;/html&gt;
+
+
+GET /py/confwatch/ HTTP/1.1
+Cookie: COOKIE_last_login=ed.example
+Accept-Language: en-US
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Referer: https://staging.example.com/py/confwatch
+Host: staging.example.com
+User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET4.0C; .NET4.0E; .NET CLR 3.5.30729; .NET CLR 3.0.30729)
+
+
+HTTP/1.1 200 OK
+Date: Tue, 03 Dec 2013 19:59:38 GMT
+Server: Apache/2.2.3 (Red Hat)
+Last-Modified: Tue, 03 Dec 2013 19:59:38 GMT
+Cache-Control: no-store,no-cache,must-revalidate
+Expires: -1
+Content-Length: 2751
+Content-Type: text/html; charset=UTF-8
+
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+
+&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;Conferance Watch: Waiting for Authentication&lt;/TITLE&gt;
+
+&lt;SCRIPT src="/script/sugar.js" type="text/javascript"&gt;&lt;/SCRIPT&gt;
+&lt;SCRIPT src="/script/helptip.js" type="text/javascript"&gt;&lt;/SCRIPT&gt;
+&lt;LINK href="/css/combobox.css" type="text/css" rel="stylesheet"&gt;
+
+&lt;/HEAD&gt;
+&lt;BODY&gt;&lt;DIV class="blueman_div_border"&gt;&lt;SPAN class="blueman_span_title"&gt;Waiting for Authentication&lt;/SPAN&gt;&lt;P&gt;After you have logged in, this screen will continue with your work.&lt;/P&gt;
+&lt;/BODY&gt;
+&lt;/HTML&gt;
+          </OriginalHttpTraffic>
+          <TestHttpTraffic>GET /py/confwatch/?"onmouseover="alert(370)" HTTP/1.1
+Cookie: COOKIE_last_login=ed.example
+Accept-Language: en-US
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Referer: https://staging.example.com/py/splash.pt
+Host: staging.example.com
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Win64; x64; Trident/4.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; Tablet PC 2.0)
+
+
+HTTP/1.1 200 OK
+Date: Wed, 04 Dec 2013 23:29:39 GMT
+Server: Apache/2.2.3 (Red Hat)
+Last-Modified: Wed, 04 Dec 2013 23:29:41 GMT
+Cache-Control: no-store,no-cache,must-revalidate
+Expires: -1
+Content-Length: 112324
+Content-Type: text/html; charset=UTF-8
+
+
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html id="mainbody"&gt;
+&lt;head&gt;
+    &lt;title&gt;ConfWatch&lt;/title&gt;
+&lt;link href="/css/menus.css" type="text/css" rel="stylesheet"&gt;
+&lt;script src="/script/sugar.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body onload="dynamicMenuPositioning();" onresize="dynamicMenuPositioning();"&gt;
+&lt;div style="background-color: #FFAAAA" class="menu_menubar" id="menubar"&gt;
+&lt;a name="menu_button" class="menu_button" href="" onclick="return buttonClick(event, 'z--reports--Menu');" onmouseover="buttonMouseover(event, 'z--reports--Menu');"&gt;Reports&lt;/a&gt;
+&lt;a name="menu_button" class="menu_button" href="" onclick="return buttonClick(event, 'historyMenu');" onmouseover="buttonMouseover(event, 'historyMenu');"&gt;History&lt;/a&gt;
+    [many lines removed]
+	&lt;OPTION  class="FilterFormDropDownList" value="200"&gt;Team Int...
+          </TestHttpTraffic>
+        </Variant>
+      </Issue>
+      <Issue IssueTypeID="attCrossSiteScripting" Noise="False">
+        <Url>https://staging.example.com/py/clear_history.esp</Url>
+        <Severity>High</Severity>
+        <Entity Name="clear_history.esp" Type="Page" />
+        <Variant ID="634">
+          <Comments />
+          <Difference>Path:  /py/clear_history.esp -&gt; /py/clear_history.esp/"&gt;&lt;script&gt;alert(399)&lt;/script&gt;</Difference>
+          <Reasoning>The test result seems to indicate a vulnerability because Appscan successfully embedded a script in the response, which will be executed when the page loads in the user's browser.</Reasoning>
+          <AdditionalData />
+          <CWE>80</CWE>
+          <CVE />
+          <ValidationDataLocationAtTestResponse>
+            <Validation Location="680" Length="9" String="text/html" />
+            <Validation Location="1136" Length="10" String="alert(399)" />
+          </ValidationDataLocationAtTestResponse>
+          <OriginalHttpTraffic>GET /py/clear_history.esp HTTP/1.1
+Cookie: COOKIE_last_login=ed.example
+Accept-Language: en-US
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Referer: https://staging.example.com/py/splash.pt
+Host: staging.example.com
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Win64; x64; Trident/4.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; Tablet PC 2.0)
+
+
+HTTP/1.1 200 OK
+Date: Tue, 03 Dec 2013 18:26:54 GMT
+Server: Apache/2.2.3 (Red Hat)
+cache-control: no-store,no-cache,must-revalidate
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=UTF-8
+
+&lt;div class="menuItemSep"&gt;&lt;/div&gt;
+&lt;a class="menu_menuitem" href="javascript:clearHistory();resetMenus();"&gt;Clear&lt;/a&gt;
+&lt;a class="menu_menuitem" href="javascript:clearSession();resetMenus();"&gt;Clear Session Data&lt;/a&gt;
+          </OriginalHttpTraffic>
+          <TestHttpTraffic>GET /py/clear_history.esp/"&gt;&lt;script&gt;alert(399)&lt;/script&gt; HTTP/1.1
+Cookie: COOKIE_last_login=ed.example
+Accept-Language: en-US
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Referer: https://staging.example.com/py/splash.pt
+Host: staging.example.com
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Win64; x64; Trident/4.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; Tablet PC 2.0)
+
+
+HTTP/1.1 404 Not Found
+Date: Wed, 04 Dec 2013 21:21:50 GMT
+Server: Apache/2.2.3 (Red Hat)
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=UTF-8
+
+&lt;!-- start --&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;/head&gt;&lt;body&gt;
+&lt;p style="font-size: large; margin: auto"&gt;
+An error has occurred.  Please submit a bug report.
+&lt;/p&gt;
+&lt;pre style="border: solid thin grey; padding: 0.3ex 0.5ex"&gt;
+[Wed Dec  4 15:21:50 2013] ESPy: HTTP Error The URL you specified doesn't exist or wasn't understood. (HTTP ERROR 404)
+HTTP_REFERER: https://staging.example.com/py/splash.pt
+REQUEST_URI: /py/clear_history.esp/"&gt;&lt;script&gt;alert(399)&lt;/script&gt;
+REMOTE_ADDR: 10.14.209.191
+SERVER_ADDR: 10.12.124.153
+&lt;/pre&gt;
+&lt;/body&gt;&lt;/html&gt;
+          </TestHttpTraffic>
+        </Variant>
+      </Issue>
+
+      <Issue IssueTypeID="constTransient" Noise="False">
+        <Url>https://staging.example.com/py/login_handler.pt</Url>
+        <Severity>Medium</Severity>
+        <Entity Name="login_handler.pt" Type="Page" />
+        <Variant ID="1272">
+          <Comments />
+          <Difference />
+          <Reasoning>The test result seems to indicate a vulnerability because the session identifiers in the Original Request (on the left) and in the Response (on the right) are identical. They should have been updated in the response.</Reasoning>
+          <AdditionalData />
+          <CWE>89</CWE>
+          <CVE />
+          <ValidationDataLocationAtTestResponse />
+          <OriginalHttpTraffic>POST /py/login_handler.pt HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Cookie: COOKIE_last_login=ed.example
+Accept-Language: en-US
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Referer: https://staging.example.com/py/core_login_page.pt
+Host: staging.example.com
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Win64; x64; Trident/4.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; Tablet PC 2.0)
+Content-Length: 127
+
+userid=ed.example&amp;password=abc123&amp;post_vars=fXEBKFUMY3VycmVudF9wYWdlcQJVCS9weS9jb3JlL3EDVQhwb3N0dmFyc3EEfXEFdS4%3D
+
+HTTP/1.1 200 OK
+Date: Tue, 03 Dec 2013 18:43:48 GMT
+Server: Apache
+Last-Modified: Tue, 03 Dec 2013 18:43:48 GMT
+Cache-Control: no-store,no-cache,must-revalidate
+Expires: -1
+Content-Length: 2231
+Content-Type: text/html; charset=UTF-8
+Set-Cookie: COOKIE_last_login=ed.example; Domain=example.com; expires=Thu, 02-Jan-2014 18:43:48 GMT; Path=/;
+
+
+&lt;html id="mainbody"&gt;
+&lt;HEAD&gt;&lt;TITLE&gt;Conf&lt;/TITLE&gt;
+
+&lt;SCRIPT src="/script/sugar.js" type="text/javascript"&gt;&lt;/SCRIPT&gt;
+  [many lines removed]
+&lt;/body&gt;
+&lt;/html&gt;
+          </OriginalHttpTraffic>
+          <TestHttpTraffic>POST /py/login_handler.pt HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Cookie: COOKIE_last_login=ed.example
+Accept-Language: en-US
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Referer: https://staging.example.com/py/login_page.pt
+Host: staging.example.com
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Win64; x64; Trident/4.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; Tablet PC 2.0)
+Content-Length: 127
+
+userid=ed.example&amp;password=abc123&amp;post_vars=fXEBKFUMY3VycmVudF9wYWdlcQJVCS9weS9jb3JlL3EDVQhwb3N0dmFyc3EEfXEFdS4%3D
+
+HTTP/1.1 200 OK
+Date: Tue, 03 Dec 2013 18:43:48 GMT
+Server: Apache/2.2.3 (Red Hat)
+Last-Modified: Tue, 03 Dec 2013 18:43:48 GMT
+Cache-Control: no-store,no-cache,must-revalidate
+Expires: -1
+Content-Length: 2231
+Content-Type: text/html; charset=UTF-8
+Set-Cookie: COOKIE_last_login=ed.example; Domain=example.com; expires=Thu, 02-Jan-2014 18:43:48 GMT; Path=/;
+
+&lt;html id="mainbody"&gt;
+&lt;HEAD&gt;&lt;TITLE&gt;CONF&lt;/TITLE&gt;
+
+&lt;SCRIPT src="/script/sugar.js" type="text/javascript"&gt;&lt;/SCRIPT&gt;
+  [many lines removed]
+&lt;/body&gt;
+&lt;/html&gt;
+          </TestHttpTraffic>
+        </Variant>
+      </Issue>
+    </Issues>
+  </Results>
+  <ApplicationData>
+    <Cookies>
+      <Total>1</Total>
+      <Cookie>
+        <Value>ed.example</Value>
+        <FirstSetInUrl>https://staging.example.com/py/core_login_handler.pt</FirstSetInUrl>
+        <FirstRequestedInUrl>https://staging.example.com/script/sugar.js</FirstRequestedInUrl>
+        <Domain>example.com</Domain>
+        <Expires>1/2/2014 12:43:48 PM</Expires>
+        <Secure>False</Secure>
+        <Name>COOKIE_last_login</Name>
+      </Cookie>
+    </Cookies>
+    <JavaScripts>
+      <Total>2</Total>
+      <JavaScript>
+        <Text>
+url_parts = window.location.href.split("?");
+if (url_parts.length &gt;= 2){
+    window.location.href = "/py/index.pt?"+url_parts[1];
+}else{
+    window.location.href = "/py/index.pt";
+}
+</Text>
+        <Url>https://staging.example.com/</Url>
+      </JavaScript>
+      <JavaScript>
+        <Text>
+            document.getElementsByName('login_redirect_hash')[0].value = document.location.hash;
+            document.post_reloader_form.submit();
+            </Text>
+        <Url>https://staging.example.com/py/index.pt</Url>
+      </JavaScript>
+    </JavaScripts>
+    <Comments>
+      <Total>2</Total>
+      <Comment>
+        <Text> Using this ugly table crap is easier than making margins work right on IE </Text>
+        <Url>https://staging.example.com/py/portal/</Url>
+      </Comment>
+      <Comment>
+        <Text> Again, using tables because IE stinks </Text>
+        <Url>https://staging.example.com/py/portal/</Url>
+      </Comment>
+    </Comments>
+    <ScriptParameters>
+      <Total>2</Total>
+      <ScriptParameter>
+        <Name>FORMABLE::Form1::severity</Name>
+        <Values />
+        <Url>https://staging.example.com/py/call/add/aup.pt?actioncall=1</Url>
+        <Type>Hidden</Type>
+      </ScriptParameter>
+      <ScriptParameter>
+        <Name>conference_number</Name>
+        <Values>
+          <Value>497876</Value>
+          <Value>445293</Value>
+          <Value>450909</Value>
+          <Value>494054</Value>
+          <Value>526635</Value>
+        </Values>
+        <Url>https://staging.example.com/py/conference/location.pt</Url>
+        <Type>Body</Type>
+      </ScriptParameter>
+    </ScriptParameters>
+    <VisitedLinks>
+      <Total>5</Total>
+      <VisitedLink>
+        <Url>http://staging.example.com/</Url>
+      </VisitedLink>
+      <VisitedLink>
+        <Url>https://staging.example.com/</Url>
+      </VisitedLink>
+      <VisitedLink>
+        <Url>https://staging.example.com/py/index.pt</Url>
+      </VisitedLink>
+      <VisitedLink>
+        <Url>https://staging.example.com/script/sugar.js</Url>
+      </VisitedLink>
+      <VisitedLink>
+        <Url>https://staging.example.com/script/helptip.js</Url>
+      </VisitedLink>
+    </VisitedLinks>
+    <BrokenLinks>
+      <Total>3</Total>
+      <BrokenLink>
+        <Reason>Response Status '404' - Not Found</Reason>
+        <Url>https://staging.example.com/doesnotexist/</Url>
+      </BrokenLink>
+      <BrokenLink>
+        <Reason>Response Status '404' - Not Found</Reason>
+        <Url>https://staging.example.com/script/123</Url>
+      </BrokenLink>
+      <BrokenLink>
+        <Reason>Response Status '500' - Internal Server Error</Reason>
+        <Url>https://staging.example.com/py/cause500.pt</Url>
+      </BrokenLink>
+    </BrokenLinks>
+    <FilteredLinks>
+      <Total>2</Total>
+      <FilteredLink>
+        <Reason>File Extension</Reason>
+        <Url>https://staging.example.com/script/helptip/css/helptip.css</Url>
+      </FilteredLink>
+      <FilteredLink>
+        <Reason>File Extension</Reason>
+        <Url>https://staging.example.com/css/core2_basic.css</Url>
+      </FilteredLink>
+    </FilteredLinks>
+  </ApplicationData>
+</XmlReport>

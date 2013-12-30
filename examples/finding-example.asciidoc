@@ -1,0 +1,30 @@
+=== Finding 001: SNMP Agent Default Community Name (public) ===
+
+*Severity:* S2
+
+*Systems:*
+[path]:10.23.246.254
+[parameter]: port 161
+
+*Description:* 
+
+The SNMP service is available on the listed hosts and configured with the default community string. 
+
+*Details and Mitigation:*
+
+It is possible to obtain the default community name of the remote SNMP server.
+
+An attacker may use this information to gain more knowledge about the remote host, or to change the configuration of the remote system (if the default community allows such modifications). 
+
+Mitigation:
+
+Disable the SNMP service on the remote host if you do not use it. 
+If SNMP is necessary, either filter incoming UDP packets going to this port, or change the default community string. 
+
+*Impact:*
+
+Anyone that can access the IP can obtain sensitive information about the system, such as running processes, filesystem information, hardware architecture, TCP connections and listening ports, and uptime.
+
+
+*References:*
+http://cwe.mitre.org/data/definitions/16.html[CWE-16: Configuration]

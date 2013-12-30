@@ -1,0 +1,19 @@
+issues
+* issue
+** serialNumber
+** type
+** name
+** host - attr ip
+** path
+** location
+** severity
+** confidence
+** issueBackground
+** issueDetail
+** issueDetaiItems
+*** issueDetailItem
+** remediationBackground
+** requestresponse
+*** request - attr method, attr base64 (true/false)
+*** response - attr base64 (true/false)
+*** responseRedirected

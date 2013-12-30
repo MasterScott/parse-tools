@@ -1,0 +1,114 @@
+XmlReport
+* AppScanInfo
+** Version
+** ServicePack
+* Summary
+** TotalIssues
+** TotalVariants
+** TotalRemediations
+** TotalScanDuration
+** Hosts
+*** Host - attr Name
+**** TotalInfomationalIssues
+**** TotalLowSeverityIssues
+**** TotalMediumSeverityIssues
+**** TotalHighSeverityIssues
+**** Total
+* Results
+** RemediationTypes
+*** Total
+*** RemediationType - attr ID
+**** Name
+**** Priority
+**** fixRecommendation
+***** text - note: one per line == WTF
+***** link - attr target
+***** br
+** IssueTypes
+*** Total
+*** IssueType - attr ID, attr Count
+**** RemediationID - note: matches Remediation Type ID above
+**** advisory
+***** name
+***** testDescription
+***** threatClassification
+****** name
+****** reference
+***** testTechnicalDescription
+****** text - note: one per line == WTF
+****** code
+****** br
+***** causes
+****** cause
+***** securityRisks
+****** securityRisk
+***** affectedProducts
+****** affectedProduct
+***** cwe 
+****** link - attr target (a link to mitre), attr id (cwe idenditifier)
+***** references
+****** link - attr target (link to page), cdata has link text
+***** fixRecommendations
+****** fixRecommendation - attr type (general or some languages)
+******* text - note: one per line == WTF
+**** Severity
+**** Invasive
+** Issues
+*** Issue
+**** Url
+**** Severity
+**** Entity - attr Name, attr type
+**** Variant - attr ID (one per systems or specific defect)
+***** Comments
+***** Difference
+***** Reasoning
+***** AdditionalData
+***** CWE
+***** CVE
+***** ValidationDataAtTestResponse
+***** OriginalHttpTraffic
+***** TestHttpTraffic
+** ApplicationData
+*** Cookies
+**** Total
+**** Cookie
+***** Value
+***** FirstSetInUrl
+***** FirstRequestedInUrl
+***** Domain
+***** Expires
+***** Secure
+***** Name
+*** JavaScripts
+**** Total
+**** JavaScript
+***** Text
+***** Url
+*** Comments
+**** Total
+**** Comment
+***** Text
+***** Url
+*** ScriptParameters
+**** Total
+**** ScriptParameters
+***** Name
+***** Values
+****** Value
+***** URL
+***** Type
+*** VisitedLInks
+**** Total
+**** VisitedLink
+***** Url
+*** BrokenLinks
+**** Total
+**** BrokenLink
+***** Reason
+***** URL
+*** FilteredLinks
+**** Total
+**** FilteredLink
+***** Reason
+***** Url
+

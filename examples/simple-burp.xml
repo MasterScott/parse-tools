@@ -1,0 +1,12 @@
+  <issue>
+    <serialNumber>8798066606252017664</serialNumber>
+    <type>5245344</type>
+    <name>Frameable response (potential Clickjacking)</name>
+    <host ip="10.1.1.1">https://staging.example.com</host>
+    <path><![CDATA[/py/account/editPaymentInfo.pt]]></path>
+    <location><![CDATA[/py/account/editPaymentInfo.pt]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[It might be possible for a web page controlled by an attacker to load the content of this response within an iframe on the attacker's page. This may enable a "clickjacking" attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.<br><br>Note that this issue is being reported because the application's response does not set a suitable <b>X-Frame-Options</b> header in order to prevent framing attacks. Some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.]]></issueBackground>
+    <remediationBackground><![CDATA[You should review the application functions that are accessible from within the response, and determine whether they can be used by application users to perform any sensitive actions within the application. If so, then a framing attack targeting this response may result in unauthorized actions.<br><br>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself.]]></remediationBackground>
+  </issue>
